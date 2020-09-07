@@ -1,0 +1,19 @@
+#searchResults img {
+    width:100%;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
+}
+
+@media(min-width:960px) {
+    #searchResults .well{
+        height: 500px;
+    }
+
+    #searchResults img{
+        height: 390px;
+    }
+}
