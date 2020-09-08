@@ -17,3 +17,12 @@
         height: 390px;
     }
 }
+@media(min-width:960px) {
+    #nominations .well{
+        height: 600px;
+    }
+
+    #nominations img{
+        height: 250px;
+    }
+}

@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    updateNominations();
     $('#searchForm').on('submit', (event), function(){
         let searchText = $('#searchText').val();
         getMovies(searchText);
@@ -11,9 +12,9 @@ function getMovies(searchText){
     .then(function(response){
         console.log(response);
         let movies = response.data.Search;
-        let output = '';
+        let resultsOutput = '';
         $.each(movies, function(i, movie){
-            output += `
+            resultsOutput += `
             <div class="col-md-3">
                 <div class="well text-center">
                     <img  class="py-2" src="${movie.Poster}">
@@ -25,7 +26,7 @@ function getMovies(searchText){
             `;
         });
         
-        $('#searchResults').html(output);
+        $('#searchResults').html(resultsOutput);
     })
     .catch(function(err){
         console.log(err);
@@ -46,7 +47,7 @@ function showMovie(){
       console.log(response);
       let movie = response.data;
 
-      let output =`
+      let showOutput =`
         <div class="row">
           <div class="col-md-4 py-5">
             <img src="${movie.Poster}" class="thumbnail">
@@ -72,7 +73,7 @@ function showMovie(){
         </div>
       `;
 
-      $('#showMovie').html(output);
+      $('#showMovie').html(showOutput);
   })
   .catch(function(err){
       console.log(err);
@@ -82,25 +83,60 @@ function showMovie(){
 
 function nominateMovieId(id) {
   if(JSON.parse(sessionStorage.getItem("nominations") == null)){
-    console.log(JSON.parse(sessionStorage.getItem("nominations")));
     let nominations = []
     sessionStorage.setItem('nominations', JSON.stringify(nominations));
   }
 
   let nominations = JSON.parse(sessionStorage.getItem("nominations"));
   console.log(nominations);
-
+  if (nominations.length >= 5){
+    return false
+  }
   for (i = 0, len = nominations.length; i < len; i++) {
-    console.log(i);
-    console.log(nominations[i]);
     if (nominations[i] == id){
       return false
     }
   }
-
   nominations.push(id);
   console.log(nominations);  
   sessionStorage.setItem('nominations', JSON.stringify(nominations));
-  //let consoleoutput = JSON.parse(sessionStorage.getItem("nominations"));
+  updateNominations();
+}
 
+function updateNominations(){
+  if(JSON.parse(sessionStorage.getItem("nominations") == null)){
+    let nominations = []
+    sessionStorage.setItem('nominations', JSON.stringify(nominations));
+  }
+  var nominations = JSON.parse(sessionStorage.getItem("nominations"))
+  nominationsOutput = ``
+  for (i = 0, len = nominations.length; i < len; i++) {
+    axios.get('https://www.omdbapi.com/?apikey=91e54dfc&i=' + nominations[i])
+    .then(function(response){
+      console.log(response);
+      let nominationDetails = response.data;
+      nominationsOutput +=`
+        <div class="card bg-light">
+          <img class="card-img-top" src="${nominationDetails.Poster}" alt="Card image cap">
+          <div class="card-body">
+          <a href="index.html" class="btn btn-danger px-4">Remove</a>
+          </div>
+        </div>
+      `;
+      return nominationsOutput
+    })
+    .then(function(nominationsOutput){
+      for (i = 0, len = (5-(nominations.length)); i < len; i++) {
+        nominationsOutput +=`
+        <div class="card bg-light" >
+          <img class="card-img-top" src="images/nominations-placeholder.png" alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title text-muted">Not Assigned</h5>
+          </div>
+        </div>
+        `;
+      }
+      $('#nominations').html(nominationsOutput);
+    })    
+  }
 }
