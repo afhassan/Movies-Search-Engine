@@ -16,6 +16,10 @@
     #searchResults img{
         height: 390px;
     }
+    
+    #searchResults h5{
+        height: 50px;
+    }
 }
 @media(min-width:960px) {
     #nominations .well{
@@ -25,4 +29,8 @@
     #nominations img{
         height: 250px;
     }
+}
+
+#submitNominations, .alert{
+    display:none;
 }

@@ -1,9 +1,11 @@
 $(document).ready(function() {
+    $('.alert').hide();
     updateNominations();
     $('#searchForm').on('submit', (event), function(){
         let searchText = $('#searchText').val();
         getMovies(searchText);
         event.preventDefault();
+        $('.alert').hide();
     })
 });
 
@@ -19,8 +21,8 @@ function getMovies(searchText){
                 <div class="well text-center">
                     <img  class="py-2" src="${movie.Poster}">
                     <h5>${movie.Title} (${movie.Year})</h5>
-                    <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary" href="#">Details</a>
-                    <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success" href="#">Nominate</a>
+                    <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-3" href="#">Details</a>
+                    <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-3" href="#">Nominate</a>
                 </div>
             </div>
             `;
@@ -58,11 +60,11 @@ function showMovie(){
               <li class="list-group-item text-left"><strong>Genres:</strong> ${movie.Genre}</li>
               <li class="list-group-item text-left"><strong>Language:</strong> ${movie.Language}</li>
               <li class="list-group-item text-left"><strong>Released:</strong> ${movie.Released}</li>
+              <li class="list-group-item text-left"><strong>Rated:</strong> ${movie.Rated}</li>
+              <li class="list-group-item text-left"><strong>IMDB Rating:</strong> ${movie.imdbRating}</li>
               <li class="list-group-item text-left"><strong>Director:</strong> ${movie.Director}</li>
               <li class="list-group-item text-left"><strong>Writers:</strong> ${movie.Writer}</li>
               <li class="list-group-item text-left"><strong>Actors:</strong> ${movie.Actors}</li>
-              <li class="list-group-item text-left"><strong>Rated:</strong> ${movie.Rated}</li>
-              <li class="list-group-item text-left"><strong>IMDB Rating:</strong> ${movie.imdbRating}</li>
               <li class="list-group-item text-left"><strong>Plot:</strong> ${movie.Plot}</li>
             </ul>
             <div class="text-center py-3">
@@ -82,6 +84,7 @@ function showMovie(){
 
 
 function nominateMovie(id) {
+  $('.alert').hide();
   if(JSON.parse(sessionStorage.getItem("nominations") == null)){
     let nominations = []
     sessionStorage.setItem('nominations', JSON.stringify(nominations));
@@ -164,4 +167,18 @@ function updateNominations(){
       $('#nominations').html(nominationsOutput);
     })    
   }
+  if (nominations.length == 5){
+    $('#submitNominations').show();
+  }
+  else{
+    $('#submitNominations').hide();
+  }
+}
+
+function submitNominations(){
+  $('#submitNominations').hide();
+  $('.alert').show();
+  let nominations = []
+  sessionStorage.setItem('nominations', JSON.stringify(nominations));
+  updateNominations();
 }
