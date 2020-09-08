@@ -18,7 +18,8 @@ function getMovies(searchText){
                 <div class="well text-center">
                     <img  class="py-2" src="${movie.Poster}">
                     <h5>${movie.Title} (${movie.Year})</h5>
-                    <a onclick="movieSelected('${movie.imdbID}')" class="btn btn-secondary" href="#">Details</a>
+                    <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary" href="#">Details</a>
+                    <a onclick="nominateMovieId('${movie.imdbID}')" class="btn btn-success" href="#">Nominate</a>
                 </div>
             </div>
             `;
@@ -31,16 +32,16 @@ function getMovies(searchText){
     })
 }
 
-function movieSelected(id) {
-  sessionStorage.setItem('movieID', id);
+function showMovieId(id) {
+  sessionStorage.setItem('movieId', id);
   window.location = 'show.html';
   return false;
 }
 
 function showMovie(){
-  let movieId = sessionStorage.getItem('movieID');
+  let movieId = sessionStorage.getItem('movieId');
 
-  axios.get('http://www.omdbapi.com/?apikey=91e54dfc&i=' + movieId)
+  axios.get('https://www.omdbapi.com/?apikey=91e54dfc&i=' + movieId)
   .then(function(response){
       console.log(response);
       let movie = response.data;
@@ -76,4 +77,30 @@ function showMovie(){
   .catch(function(err){
       console.log(err);
   })
+}
+
+
+function nominateMovieId(id) {
+  if(JSON.parse(sessionStorage.getItem("nominations") == null)){
+    console.log(JSON.parse(sessionStorage.getItem("nominations")));
+    let nominations = []
+    sessionStorage.setItem('nominations', JSON.stringify(nominations));
+  }
+
+  let nominations = JSON.parse(sessionStorage.getItem("nominations"));
+  console.log(nominations);
+
+  for (i = 0, len = nominations.length; i < len; i++) {
+    console.log(i);
+    console.log(nominations[i]);
+    if (nominations[i] == id){
+      return false
+    }
+  }
+
+  nominations.push(id);
+  console.log(nominations);  
+  sessionStorage.setItem('nominations', JSON.stringify(nominations));
+  //let consoleoutput = JSON.parse(sessionStorage.getItem("nominations"));
+
 }
