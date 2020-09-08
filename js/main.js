@@ -10,29 +10,27 @@ $(document).ready(function() {
 });
 
 function getMovies(searchText){
-    axios.get('https://www.omdbapi.com/?apikey=91e54dfc&s=' + searchText)
-    .then(function(response){
-        console.log(response);
-        let movies = response.data.Search;
-        let resultsOutput = '';
-        $.each(movies, function(i, movie){
-            resultsOutput += `
-            <div class="col-md-3">
-                <div class="well text-center">
-                    <img  class="py-2" src="${movie.Poster}">
-                    <h5>${movie.Title} (${movie.Year})</h5>
-                    <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-3" href="#">Details</a>
-                    <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-3" href="#">Nominate</a>
-                </div>
+    fetch('http://www.omdbapi.com/?apikey=91e54dfc&s=' + searchText)
+    .then(response => response.json())
+    .then(data => {
+      let movies = data.Search;
+      console.log(movies)
+      let resultsOutput = '';
+      $.each(movies, function(i, movie){
+        resultsOutput += `
+        <div class="col-md-3">
+            <div class="well text-center">
+                <img  class="py-2" src="${movie.Poster}">
+                <h5>${movie.Title} (${movie.Year})</h5>
+                <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-3" href="#">Details</a>
+                <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-3" href="#">Nominate</a>
             </div>
-            `;
-        });
-        
-        $('#searchResults').html(resultsOutput);
+        </div>
+        `;
+    });
+    $('#searchResults').html(resultsOutput);
     })
-    .catch(function(err){
-        console.log(err);
-    })
+    .catch(err => console.log(err))
 }
 
 function showMovieId(id) {
@@ -44,10 +42,11 @@ function showMovieId(id) {
 function showMovie(){
   let movieId = sessionStorage.getItem('movieId');
 
-  axios.get('https://www.omdbapi.com/?apikey=91e54dfc&i=' + movieId)
+  fetch('http://www.omdbapi.com/?apikey=91e54dfc&i=' + movieId)
   .then(function(response){
       console.log(response);
-      let movie = response.data;
+      let movieJSON = response.json()
+      let movie = movieJSON.data;
 
       let showOutput =`
         <div class="row">
