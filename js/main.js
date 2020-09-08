@@ -20,7 +20,7 @@ function getMovies(searchText){
                     <img  class="py-2" src="${movie.Poster}">
                     <h5>${movie.Title} (${movie.Year})</h5>
                     <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary" href="#">Details</a>
-                    <a onclick="nominateMovieId('${movie.imdbID}')" class="btn btn-success" href="#">Nominate</a>
+                    <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success" href="#">Nominate</a>
                 </div>
             </div>
             `;
@@ -81,7 +81,7 @@ function showMovie(){
 }
 
 
-function nominateMovieId(id) {
+function nominateMovie(id) {
   if(JSON.parse(sessionStorage.getItem("nominations") == null)){
     let nominations = []
     sessionStorage.setItem('nominations', JSON.stringify(nominations));
@@ -103,12 +103,37 @@ function nominateMovieId(id) {
   updateNominations();
 }
 
+function removeMovie(id) {
+  let nominations = JSON.parse(sessionStorage.getItem("nominations"));
+  for (i = 0, len = nominations.length; i < len; i++) {
+    if (nominations[i] == id){
+      nominations.splice(i,1);
+    }
+  }
+  sessionStorage.setItem('nominations', JSON.stringify(nominations));
+  updateNominations();
+
+}
+
 function updateNominations(){
   if(JSON.parse(sessionStorage.getItem("nominations") == null)){
     let nominations = []
     sessionStorage.setItem('nominations', JSON.stringify(nominations));
   }
   var nominations = JSON.parse(sessionStorage.getItem("nominations"))
+  if(!nominations.length){
+    console.log('ran')
+    let nominationsOutput =`
+    <div class="card bg-light" >
+      <img class="card-img-top" src="images/nominations-placeholder.png" alt="Card image cap">
+      <div class="card-body">
+        <h5 class="card-title text-muted">Not Assigned</h5>
+      </div>
+    </div>
+    `;
+    $('#nominations').html(nominationsOutput.repeat(5));
+    return false
+  }
   nominationsOutput = ``
   for (i = 0, len = nominations.length; i < len; i++) {
     axios.get('https://www.omdbapi.com/?apikey=91e54dfc&i=' + nominations[i])
@@ -119,7 +144,7 @@ function updateNominations(){
         <div class="card bg-light">
           <img class="card-img-top" src="${nominationDetails.Poster}" alt="Card image cap">
           <div class="card-body">
-          <a href="index.html" class="btn btn-danger px-4">Remove</a>
+            <a onclick="removeMovie('${nominationDetails.imdbID}')" class="btn btn-danger px-5" href="#">Remove</a>
           </div>
         </div>
       `;
