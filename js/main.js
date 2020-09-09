@@ -10,7 +10,7 @@ $(document).ready(function() {
 });
 
 function getMovies(searchText){
-    axios.get('https://www.omdbapi.com/?apikey=91e54dfc&s=' + searchText)
+    axios.get('https://www.omdbapi.com/?apikey=91e54dfc&type=movie&s=' + searchText)
     .then(function(response){
         console.log(response);
         let movies = response.data.Search;
@@ -85,12 +85,12 @@ function showMovie(){
 
 function nominateMovie(id) {
   $('.alert').hide();
-  if(JSON.parse(sessionStorage.getItem("nominations") == null)){
+  if(JSON.parse(localStorage.getItem("nominations") == null)){
     let nominations = []
-    sessionStorage.setItem('nominations', JSON.stringify(nominations));
+    localStorage.setItem('nominations', JSON.stringify(nominations));
   }
 
-  let nominations = JSON.parse(sessionStorage.getItem("nominations"));
+  let nominations = JSON.parse(localStorage.getItem("nominations"));
   console.log(nominations);
   if (nominations.length >= 5){
     return false
@@ -102,30 +102,29 @@ function nominateMovie(id) {
   }
   nominations.push(id);
   console.log(nominations);  
-  sessionStorage.setItem('nominations', JSON.stringify(nominations));
+  localStorage.setItem('nominations', JSON.stringify(nominations));
   updateNominations();
 }
 
 function removeMovie(id) {
-  let nominations = JSON.parse(sessionStorage.getItem("nominations"));
+  let nominations = JSON.parse(localStorage.getItem("nominations"));
   for (i = 0, len = nominations.length; i < len; i++) {
     if (nominations[i] == id){
       nominations.splice(i,1);
     }
   }
-  sessionStorage.setItem('nominations', JSON.stringify(nominations));
+  localStorage.setItem('nominations', JSON.stringify(nominations));
   updateNominations();
 
 }
 
 function updateNominations(){
-  if(JSON.parse(sessionStorage.getItem("nominations") == null)){
+  if(JSON.parse(localStorage.getItem("nominations") == null)){
     let nominations = []
-    sessionStorage.setItem('nominations', JSON.stringify(nominations));
+    localStorage.setItem('nominations', JSON.stringify(nominations));
   }
-  var nominations = JSON.parse(sessionStorage.getItem("nominations"))
+  var nominations = JSON.parse(localStorage.getItem("nominations"))
   if(!nominations.length){
-    console.log('ran')
     let nominationsOutput =`
     <div class="card bg-light" >
       <img class="card-img-top" src="images/nominations-placeholder.png" alt="Card image cap">
@@ -179,6 +178,6 @@ function submitNominations(){
   $('#submitNominations').hide();
   $('.alert').show();
   let nominations = []
-  sessionStorage.setItem('nominations', JSON.stringify(nominations));
+  localStorage.setItem('nominations', JSON.stringify(nominations));
   updateNominations();
 }
