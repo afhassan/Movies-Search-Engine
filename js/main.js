@@ -1,38 +1,45 @@
 $(document).ready(function() {
+  $('.alert').hide();
+  updateNominations();
+  getMovies();
+  $('#searchForm').on('submit', (event), function(){
+    let searchText = $('#searchText').val();
+    sessionStorage.setItem('searchText', searchText);
+    getMovies();
+    event.preventDefault();
     $('.alert').hide();
-    updateNominations();
-    $('#searchForm').on('submit', (event), function(){
-        let searchText = $('#searchText').val();
-        getMovies(searchText);
-        event.preventDefault();
-        $('.alert').hide();
-    })
+  })
 });
 
-function getMovies(searchText){
-    axios.get('https://www.omdbapi.com/?apikey=91e54dfc&type=movie&s=' + searchText)
-    .then(function(response){
-        console.log(response);
-        let movies = response.data.Search;
-        let resultsOutput = '';
-        $.each(movies, function(i, movie){
-            resultsOutput += `
-            <div class="col-md-3">
-                <div class="well text-center">
-                    <img  class="py-2" src="${movie.Poster}">
-                    <h5>${movie.Title} (${movie.Year})</h5>
-                    <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-3" href="#">Details</a>
-                    <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-3" href="#">Nominate</a>
-                </div>
+function getMovies(){
+  let searchText = sessionStorage.getItem('searchText');
+  if (searchText == null){
+    return false
+  }
+  $('#searchText').val(searchText);
+  axios.get('https://www.omdbapi.com/?apikey=91e54dfc&type=movie&s=' + searchText)
+  .then(function(response){
+    console.log(response);
+    let movies = response.data.Search;
+    let resultsOutput = '';
+    $.each(movies, function(i, movie){
+        resultsOutput += `
+        <div class="col-md-3">
+            <div class="well text-center">
+                <img  class="py-2" src="${movie.Poster}">
+                <h5>${movie.Title} (${movie.Year})</h5>
+                <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-3" href="#">Details</a>
+                <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-3" href="#">Nominate</a>
             </div>
-            `;
-        });
-        
-        $('#searchResults').html(resultsOutput);
-    })
-    .catch(function(err){
-        console.log(err);
-    })
+        </div>
+        `;
+    });
+    
+    $('#searchResults').html(resultsOutput);
+  })
+  .catch(function(err){
+    console.log(err);
+  })
 }
 
 function showMovieId(id) {
