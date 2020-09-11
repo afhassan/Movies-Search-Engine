@@ -143,11 +143,11 @@ function updateNominations(){
     $('#nominations').html(nominationsOutput.repeat(5));
     return false
   }
-  nominationsOutput = ``
+  var nominationsOutput = ``
+  var counter = 0
   for (i = 0, len = nominations.length; i < len; i++) {
     axios.get('https://www.omdbapi.com/?apikey=91e54dfc&i=' + nominations[i])
     .then(function(response){
-      console.log(response);
       let nominationDetails = response.data;
       nominationsOutput +=`
         <div class="card bg-light">
@@ -170,7 +170,10 @@ function updateNominations(){
         </div>
         `;
       }
-      $('#nominations').html(nominationsOutput);
+      counter += 1
+      if(counter == nominations.length){
+        $('#nominations').html(nominationsOutput);
+      }
     })    
   }
   if (nominations.length == 5){
