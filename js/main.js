@@ -9,7 +9,10 @@ $(document).ready(function() {
   })
 });
 
-
+/**
+ * Makes an API request with search text and outputs the results as HTML.
+ * 
+ */
 function getMovies(){
   let searchText = sessionStorage.getItem('searchText');
   var nominations = JSON.parse(localStorage.getItem('nominations'));
@@ -43,7 +46,6 @@ function getMovies(){
       </div>
       `;
     });
-    
     $('#searchResults').html(resultsOutput);
   })
   .catch(function(err){
@@ -51,12 +53,21 @@ function getMovies(){
   })
 }
 
+/**
+ * Stores the imdbID of the target movie in session storage then returns the view show.html
+ * 
+ * @param {string} id 
+ */
 function showMovieId(id) {
   sessionStorage.setItem('movieId', id);
   window.location = 'show.html';
   return false;
 }
 
+/**
+ * Makes an API request with movie imdbID and outputs the result as HTML.
+ * 
+ */
 function showMovie(){
   let movieId = sessionStorage.getItem('movieId');
 
@@ -96,6 +107,11 @@ function showMovie(){
   })
 }
 
+/**
+ * Stores the imdbID of the nominated movie in local storage.
+ * 
+ * @param {string} id 
+ */
 function nominateMovie(id) {
   $('.alert').hide();
   let nominations = JSON.parse(localStorage.getItem("nominations"));
@@ -114,6 +130,11 @@ function nominateMovie(id) {
   getMovies();
 }
 
+/**
+ * Removes the imdbID of the target movie from nominations in local storage.
+ * 
+ * @param {string} id 
+ */
 function removeMovie(id) {
   let nominations = JSON.parse(localStorage.getItem("nominations"));
   for (i = 0, len = nominations.length; i < len; i++) {
@@ -126,6 +147,10 @@ function removeMovie(id) {
   getMovies();
 }
 
+/**
+ * Updates HTML of nominations section using array of imdbIDs stored in local storage and shows submit button if 5 nominations exist
+ * 
+ */
 function updateNominations(){
   if(JSON.parse(localStorage.getItem("nominations") == null)){
     let nominations = []
@@ -177,7 +202,7 @@ function updateNominations(){
       }
     })    
   }
-  
+
   if (nominations.length == 5){
     $('#submitNominations').show();
   }
@@ -186,6 +211,10 @@ function updateNominations(){
   }
 }
 
+/**
+ * Cleans nominations from local storage and shows submission alert.
+ * 
+ */
 function submitNominations(){
   $('#submitNominations').hide();
   $('.alert').show();
