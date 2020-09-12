@@ -27,11 +27,13 @@ function getMovies(){
         resultsOutput += `
         <div class="col-md-3">
             <div class="well text-center">
-                <img  class="py-2" src="${movie.Poster}">
-                <div class= "movie-overlay movie-center">
-                <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-4" href="#">Nominate</a>
-                  <div class="py-2"></div>
-                <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-4" href="#">Details</a>
+                <div class="hovertrigger">
+                  <img class="py-2" src="${movie.Poster}">
+                  <div class= "movie-overlay movie-center">
+                  <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-4" href="#">Nominate</a>
+                    <div class="py-2"></div>
+                  <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-4" href="#">Details</a>
+                  </div>
                 </div>
                 <h5>${movie.Title} (${movie.Year})</h5>
             </div>
@@ -137,8 +139,8 @@ function updateNominations(){
   var nominations = JSON.parse(localStorage.getItem("nominations"))
   if(!nominations.length){
     let nominationsOutput =`
-    <div class="card bg-light" >
-      <img class="card-img-top" src="images/nominations-placeholder.png" alt="Card image cap">
+    <div class="card bg-light full" >
+      <img class="card-img-top placeholder" src="images/nominations-placeholder.png" alt="Card image cap">
       <div class="card-body">
         <h5 class="card-title text-muted">Not Assigned</h5>
       </div>
@@ -155,9 +157,9 @@ function updateNominations(){
       let nominationDetails = response.data;
       nominationsOutput +=`
         <div class="card bg-light">
-          <img class="card-img-top" src="${nominationDetails.Poster}" alt="Card image cap">
-          <div class="card-body">
-            <a onclick="removeMovie('${nominationDetails.imdbID}')" class="btn btn-danger px-5" href="#">Remove</a>
+          <img class="full" src="${nominationDetails.Poster}" alt="Card image cap">
+          <div class="nomination-overlay nomination-center">
+            <a onclick="removeMovie('${nominationDetails.imdbID}')" class="btn btn-danger px-4" href="#">Remove</a>
           </div>
         </div>
       `;
@@ -166,8 +168,8 @@ function updateNominations(){
     .then(function(nominationsOutput){
       for (i = 0, len = (5-(nominations.length)); i < len; i++) {
         nominationsOutput +=`
-        <div class="card bg-light" >
-          <img class="card-img-top" src="images/nominations-placeholder.png" alt="Card image cap">
+        <div class="card bg-light full" >
+          <img class="card-img-top placeholder" src="images/nominations-placeholder.png" alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title text-muted">Not Assigned</h5>
           </div>
