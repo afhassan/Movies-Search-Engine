@@ -15,6 +15,7 @@
 
     #searchResults img{
         height: 390px;
+        width: 100%
     }
     
     #searchResults h5{
@@ -29,6 +30,22 @@
     #nominations img{
         height: 250px;
     }
+}
+
+.movie-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: rgba(0, 150, 100, 0.5);
+    height: 375px;
+    width: 90%;
+}
+
+.center {
+    position: absolute;
+    transform: translate(-50%, -65%);
+    text-align: center;
+    padding-top: 45%;
 }
 
 #submitNominations, .alert{
