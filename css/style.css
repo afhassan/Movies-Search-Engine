@@ -15,6 +15,7 @@
 
     #searchResults img{
         height: 390px;
+        width: 100%
     }
     
     #searchResults h5{
@@ -22,13 +23,56 @@
     }
 }
 @media(min-width:960px) {
-    #nominations .well{
-        height: 600px;
+
+    #nominations .placeholder{
+        height: 230px;
     }
 
-    #nominations img{
-        height: 250px;
+    #nominations .full{
+        height: 300px;
     }
+}
+
+.movie-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: rgba(0, 150, 100, 0.5);
+    height: 375px;
+    width: 90%;
+    opacity: 0;
+}
+
+.movie-center {
+    position: absolute;
+    transform: translate(-50%, -65%);
+    text-align: center;
+    padding-top: 45%;
+}
+
+.nomination-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: rgba(150, 0, 50, 0.5);
+    height: 300px;
+    width: 196px;
+    opacity: 0;
+}
+
+.nomination-center {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding-top: 65%;
+}
+
+.hovertrigger:hover .movie-overlay{
+    opacity: 1;
+}
+
+.card:hover .nomination-overlay{
+    opacity: 1;
 }
 
 #submitNominations, .alert{
