@@ -41,6 +41,7 @@
     height: 375px;
     width: 90%;
     opacity: 0;
+    transition: 0.5s ease;
 }
 
 .movie-center {
@@ -58,6 +59,7 @@
     height: 300px;
     width: 196px;
     opacity: 0;
+    transition: 0.5s ease;
 }
 
 .nomination-center {
