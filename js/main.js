@@ -2,11 +2,9 @@ $(document).ready(function() {
   $('.alert').hide();
   updateNominations();
   getMovies();
-  $('#searchForm').on('submit', (event), function(){
-    let searchText = $('#searchText').val();
-    sessionStorage.setItem('searchText', searchText);
+  $('#searchForm').on('submit', function(){
+    sessionStorage.setItem('searchText', $('#searchText').val());
     getMovies();
-    event.preventDefault();
     $('.alert').hide();
   })
 });
@@ -18,10 +16,10 @@ function getMovies(){
   if (searchText == null){
     return false
   }
+
   $('#searchText').val(searchText);
   axios.get('https://www.omdbapi.com/?apikey=91e54dfc&type=movie&s=' + searchText)
   .then(function(response){
-    console.log(response);
     let movies = response.data.Search;
     let resultsOutput = '';
     $.each(movies, function(i, movie){
@@ -29,21 +27,21 @@ function getMovies(){
       if(nominations.includes(movie.imdbID)) {
         disabled = 'disabled';
       }
-        resultsOutput += `
-        <div class="col-md-3">
-            <div class="well text-center">
-                <div class="hovertrigger">
-                  <img class="py-2" src="${movie.Poster}">
-                  <div class= "movie-overlay movie-center">
-                  <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-4 ${disabled}" href="#">Nominate</a>
-                    <div class="py-2"></div>
-                  <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-4" href="#">Details</a>
-                  </div>
-                </div>
-                <h5>${movie.Title} (${movie.Year})</h5>
+      resultsOutput += `
+      <div class="col-md-3">
+        <div class="well text-center">
+          <div class="hovertrigger">
+            <img class="py-2" src="${movie.Poster}">
+            <div class= "movie-overlay">
+              <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-4 ${disabled}" href="#">Nominate</a>
+              <div class="py-2"></div>
+              <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-4" href="#">Details</a>
             </div>
+          </div>
+          <h5>${movie.Title} (${movie.Year})</h5>
         </div>
-        `;
+      </div>
+      `;
     });
     
     $('#searchResults').html(resultsOutput);
@@ -64,33 +62,31 @@ function showMovie(){
 
   axios.get('https://www.omdbapi.com/?apikey=91e54dfc&i=' + movieId)
   .then(function(response){
-      console.log(response);
       let movie = response.data;
-
       let showOutput =`
-        <div class="row">
-          <div class="col-md-4 py-5">
-            <img src="${movie.Poster}" class="thumbnail">
-          </div>
-          <div class="col-md-8">
-           <h2 class="display-4">${movie.Title}</h2>
-            <ul class="list-group">
-              <li class="list-group-item text-left"><strong>Genres:</strong> ${movie.Genre}</li>
-              <li class="list-group-item text-left"><strong>Language:</strong> ${movie.Language}</li>
-              <li class="list-group-item text-left"><strong>Released:</strong> ${movie.Released}</li>
-              <li class="list-group-item text-left"><strong>Rated:</strong> ${movie.Rated}</li>
-              <li class="list-group-item text-left"><strong>IMDB Rating:</strong> ${movie.imdbRating}</li>
-              <li class="list-group-item text-left"><strong>Director:</strong> ${movie.Director}</li>
-              <li class="list-group-item text-left"><strong>Writers:</strong> ${movie.Writer}</li>
-              <li class="list-group-item text-left"><strong>Actors:</strong> ${movie.Actors}</li>
-              <li class="list-group-item text-left"><strong>Plot:</strong> ${movie.Plot}</li>
-            </ul>
-            <div class="text-center py-3">
-              <a href="http://imdb.com/title/${movie.imdbID}" target="_blank" class="btn btn-primary">View IMDB</a>
-              <a href="index.html" class="btn btn-secondary">Go Back To Search</a>
-            </div>
+      <div class="row">
+        <div class="col-md-4 py-5">
+          <img src="${movie.Poster}" class="thumbnail">
+        </div>
+        <div class="col-md-8">
+          <h2 class="display-4">${movie.Title}</h2>
+          <ul class="list-group">
+            <li class="list-group-item text-left"><strong>Genres:</strong> ${movie.Genre}</li>
+            <li class="list-group-item text-left"><strong>Language:</strong> ${movie.Language}</li>
+            <li class="list-group-item text-left"><strong>Released:</strong> ${movie.Released}</li>
+            <li class="list-group-item text-left"><strong>Rated:</strong> ${movie.Rated}</li>
+            <li class="list-group-item text-left"><strong>IMDB Rating:</strong> ${movie.imdbRating}</li>
+            <li class="list-group-item text-left"><strong>Director:</strong> ${movie.Director}</li>
+            <li class="list-group-item text-left"><strong>Writers:</strong> ${movie.Writer}</li>
+            <li class="list-group-item text-left"><strong>Actors:</strong> ${movie.Actors}</li>
+            <li class="list-group-item text-left"><strong>Plot:</strong> ${movie.Plot}</li>
+          </ul>
+          <div class="text-center py-3">
+            <a href="http://imdb.com/title/${movie.imdbID}" target="_blank" class="btn btn-primary">View IMDB</a>
+            <a href="index.html" class="btn btn-secondary">Go Back To Search</a>
           </div>
         </div>
+      </div>
       `;
 
       $('#showMovie').html(showOutput);
@@ -100,16 +96,10 @@ function showMovie(){
   })
 }
 
-
 function nominateMovie(id) {
   $('.alert').hide();
-  if(JSON.parse(localStorage.getItem("nominations") == null)){
-    let nominations = []
-    localStorage.setItem('nominations', JSON.stringify(nominations));
-  }
-
   let nominations = JSON.parse(localStorage.getItem("nominations"));
-  console.log(nominations);
+  
   if (nominations.length >= 5){
     return false
   }
@@ -119,7 +109,6 @@ function nominateMovie(id) {
     }
   }
   nominations.push(id);
-  console.log(nominations);  
   localStorage.setItem('nominations', JSON.stringify(nominations));
   updateNominations();
   getMovies();
@@ -142,6 +131,7 @@ function updateNominations(){
     let nominations = []
     localStorage.setItem('nominations', JSON.stringify(nominations));
   }
+
   var nominations = JSON.parse(localStorage.getItem("nominations"))
   if(!nominations.length){
     let nominationsOutput =`
@@ -162,12 +152,12 @@ function updateNominations(){
     .then(function(response){
       let nominationDetails = response.data;
       nominationsOutput +=`
-        <div class="card bg-light">
-          <img class="poster" src="${nominationDetails.Poster}" alt="Card image cap">
-          <div class="nomination-overlay nomination-center">
-            <a onclick="removeMovie('${nominationDetails.imdbID}')" class="btn btn-danger px-4" href="#">Remove</a>
-          </div>
+      <div class="card bg-light">
+        <img class="poster" src="${nominationDetails.Poster}" alt="Card image cap">
+        <div class="nomination-overlay">
+          <a onclick="removeMovie('${nominationDetails.imdbID}')" class="btn btn-danger px-4" href="#">Remove</a>
         </div>
+      </div>
       `;
       return nominationsOutput
     })
@@ -187,6 +177,7 @@ function updateNominations(){
       }
     })    
   }
+  
   if (nominations.length == 5){
     $('#submitNominations').show();
   }
@@ -201,7 +192,5 @@ function submitNominations(){
   let nominations = []
   localStorage.setItem('nominations', JSON.stringify(nominations));
   updateNominations();
-  let searchText = []
-  sessionStorage.setItem('searchText', searchText);
   getMovies();
 }
