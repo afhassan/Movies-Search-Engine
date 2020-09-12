@@ -11,6 +11,7 @@ $(document).ready(function() {
   })
 });
 
+
 function getMovies(){
   let searchText = sessionStorage.getItem('searchText');
   if (searchText == null){
@@ -27,7 +28,7 @@ function getMovies(){
         <div class="col-md-3">
             <div class="well text-center">
                 <img  class="py-2" src="${movie.Poster}">
-                <div class= "movie-overlay center">
+                <div class= "movie-overlay movie-center">
                 <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-4" href="#">Nominate</a>
                   <div class="py-2"></div>
                 <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-4" href="#">Details</a>
