@@ -27,7 +27,7 @@ function getMovies(){
     let resultsOutput = '';
     $.each(movies, function(i, movie){
       let disabled = ''
-      if(nominations.includes(movie.imdbID)) {
+      if(nominations.includes(movie.imdbID) || nominations.length == 5 ) {
         disabled = 'disabled';
       }
       resultsOutput += `
