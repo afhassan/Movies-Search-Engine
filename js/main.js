@@ -14,6 +14,7 @@ $(document).ready(function() {
 
 function getMovies(){
   let searchText = sessionStorage.getItem('searchText');
+  var nominations = JSON.parse(localStorage.getItem('nominations'));
   if (searchText == null){
     return false
   }
@@ -24,13 +25,17 @@ function getMovies(){
     let movies = response.data.Search;
     let resultsOutput = '';
     $.each(movies, function(i, movie){
+      let disabled = ''
+      if(nominations.includes(movie.imdbID)) {
+        disabled = 'disabled';
+      }
         resultsOutput += `
         <div class="col-md-3">
             <div class="well text-center">
                 <div class="hovertrigger">
                   <img class="py-2" src="${movie.Poster}">
                   <div class= "movie-overlay movie-center">
-                  <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-4" href="#">Nominate</a>
+                  <a onclick="nominateMovie('${movie.imdbID}')" class="btn btn-success px-4 ${disabled}" href="#">Nominate</a>
                     <div class="py-2"></div>
                   <a onclick="showMovieId('${movie.imdbID}')" class="btn btn-secondary px-4" href="#">Details</a>
                   </div>
@@ -117,6 +122,7 @@ function nominateMovie(id) {
   console.log(nominations);  
   localStorage.setItem('nominations', JSON.stringify(nominations));
   updateNominations();
+  getMovies();
 }
 
 function removeMovie(id) {
@@ -128,7 +134,7 @@ function removeMovie(id) {
   }
   localStorage.setItem('nominations', JSON.stringify(nominations));
   updateNominations();
-
+  getMovies();
 }
 
 function updateNominations(){
@@ -157,7 +163,7 @@ function updateNominations(){
       let nominationDetails = response.data;
       nominationsOutput +=`
         <div class="card bg-light">
-          <img class="full" src="${nominationDetails.Poster}" alt="Card image cap">
+          <img class="poster" src="${nominationDetails.Poster}" alt="Card image cap">
           <div class="nomination-overlay nomination-center">
             <a onclick="removeMovie('${nominationDetails.imdbID}')" class="btn btn-danger px-4" href="#">Remove</a>
           </div>
@@ -166,8 +172,7 @@ function updateNominations(){
       return nominationsOutput
     })
     .then(function(nominationsOutput){
-      for (i = 0, len = (5-(nominations.length)); i < len; i++) {
-        nominationsOutput +=`
+        let placeholder =`
         <div class="card bg-light full" >
           <img class="card-img-top placeholder" src="images/nominations-placeholder.png" alt="Card image cap">
           <div class="card-body">
@@ -175,8 +180,8 @@ function updateNominations(){
           </div>
         </div>
         `;
-      }
-      counter += 1
+        nominationsOutput += placeholder.repeat(5-nominations.length)
+        counter += 1
       if(counter == nominations.length){
         $('#nominations').html(nominationsOutput);
       }

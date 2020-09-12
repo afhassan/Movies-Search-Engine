@@ -28,6 +28,10 @@
         height: 230px;
     }
 
+    #nominations .poster{
+        height: 298px;
+    }    
+
     #nominations .full{
         height: 300px;
     }
