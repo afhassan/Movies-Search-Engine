@@ -196,4 +196,7 @@ function submitNominations(){
   let nominations = []
   localStorage.setItem('nominations', JSON.stringify(nominations));
   updateNominations();
+  let searchText = []
+  sessionStorage.setItem('searchText', searchText);
+  getMovies();
 }
