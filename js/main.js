@@ -151,7 +151,7 @@ function removeMovie(id) {
  * Updates HTML of nominations section using array of imdbIDs stored in local storage and shows submit button if 5 nominations exist
  * 
  */
-function updateNominations(){
+async function updateNominations(){
   if(JSON.parse(localStorage.getItem("nominations") == null)){
     let nominations = []
     localStorage.setItem('nominations', JSON.stringify(nominations));
@@ -170,40 +170,35 @@ function updateNominations(){
     $('#nominations').html(nominationsOutput.repeat(5));
     return false
   }
-  var nominationsOutput = ``
-  var counter = 0
-  for (i = 0, len = nominations.length; i < len; i++) {
-    axios.get('https://www.omdbapi.com/?apikey=91e54dfc&i=' + nominations[i])
-    .then(function(response){
-      let nominationDetails = response.data;
-      nominationsOutput +=`
-      <div class="card bg-light">
-        <img class="poster" src="${nominationDetails.Poster}" alt="Card image cap">
-        <div class="nomination-overlay">
-          <a onclick="removeMovie('${nominationDetails.imdbID}')" class="btn btn-danger px-4" href="#">Remove</a>
-        </div>
-      </div>
-      `;
-      return nominationsOutput
+  const nominatedMovies = await Promise.all(
+    nominations.map(async (nomination) => {
+      return axios.get('https://www.omdbapi.com/?apikey=91e54dfc&i=' + nomination)
     })
-    .then(function(nominationsOutput){
-        let placeholder =`
-        <div class="card bg-light full" >
-          <img class="card-img-top placeholder" src="images/nominations-placeholder.png" alt="Card image cap">
-          <div class="card-body">
-            <h5 class="card-title text-muted">Not Assigned</h5>
-          </div>
-        </div>
-        `;
-        nominationsOutput += placeholder.repeat(5-nominations.length)
-        counter += 1
-      if(counter == nominations.length){
-        $('#nominations').html(nominationsOutput);
-      }
-    })    
-  }
+  );
+  console.log(nominatedMovies)
+  var nominationsOutput = ``
+  nominatedMovies.forEach(nominatedMovie => {
+    nominationsOutput +=`
+    <div class="card bg-light">
+      <img class="poster" src="${nominatedMovie.data.Poster}" alt="Card image cap">
+      <div class="nomination-overlay">
+        <a onclick="removeMovie('${nominatedMovie.data.imdbID}')" class="btn btn-danger px-4" href="#">Remove</a>
+      </div>
+    </div>
+    `;
+  })
+  let placeholder =`
+  <div class="card bg-light full" >
+    <img class="card-img-top placeholder" src="images/nominations-placeholder.png" alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title text-muted">Not Assigned</h5>
+    </div>
+  </div>
+  `;
+  nominationsOutput += placeholder.repeat(5-nominatedMovies.length)
+  $('#nominations').html(nominationsOutput);
 
-  if (nominations.length == 5){
+  if (nominatedMovies.length == 5){
     $('#submitNominations').show();
   }
   else{
